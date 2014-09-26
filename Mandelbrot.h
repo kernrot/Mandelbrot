@@ -14,7 +14,7 @@ void spectral_color(double &r, double &g, double &b, double l);
 void paintMandel(int maxX, int maxY, SDL_Surface *surface, double zoom, double shiftx, double shifty, int maxIter, int minIter);
 int mandelIterations(double x0, double y0, int maxIterations);
 char Taste(int d);
-void handleKey(SDL_Event env, int &vx, int &vy, int &vzoom, bool &quit);
+void handleKey(SDL_Event env, int &vx, int &vy, int &vzoom, int &vUserIter, bool &quit);
 int distance(int x1, int y1, int x2, int y2);
 
 

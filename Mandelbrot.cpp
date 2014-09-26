@@ -53,32 +53,41 @@ int _tmain(int argc, _TCHAR* argv[])
 	double zoom = 1.0;
 	int vZoom = 0;
 	double shiftX = 0.0;
-	int vX = 0.0;
+	int vX = 0;
 	double shiftY = 0.0;
-	int vY = 0.0;
+	int vY = 0;
 
-	int initIter = 25, currIter;
+	int initIter = 50, currIter = 50;
+	int userIter = 0, vUserIter = 0;
 
+	bool needRefresh = true;
 	bool quit = false;
 
 	do {
 		SDL_LockSurface(surface);
 
-		currIter = initIter - ((int)log(zoom))*4;
-		paintMandel(resX, resY, surface, zoom, shiftX, shiftY, currIter, (currIter-initIter));
+		if (needRefresh) {
+			paintMandel(resX, resY, surface, zoom, shiftX, shiftY, currIter, (currIter-initIter));
+			needRefresh = false;
+		}
 		
 		SDL_UnlockSurface(surface);
 		SDL_Flip(surface);
-		SDL_PollEvent(evt);
-		if (evt->type == SDL_KEYDOWN || evt->type == SDL_KEYUP) {
+		
+		if ((SDL_PollEvent(evt) == 1 && ( evt->type == SDL_KEYDOWN || evt->type == SDL_KEYUP ))
+			|| (vX != 0 || vY != 0 || vZoom != 0 || vUserIter != 0)){
 			
-			handleKey(*evt, vX, vY, vZoom, quit);
+			handleKey(*evt, vX, vY, vZoom, vUserIter, quit);
 					
 			shiftX += 0.02 * zoom * vX;
 			shiftY += 0.02 * zoom * vY;
 			zoom -=   0.02 * zoom * vZoom;
+			userIter += vUserIter;
+			
+			currIter = initIter - ((int)log(zoom*zoom*zoom)) + userIter;
+			needRefresh = true;
 
-			printf("S: sx= %f sy= %f \t sz= %f i= %d\n", shiftX, shiftY, zoom, currIter);
+			printf("S: sx= %f sy= %f \t sz= %f i= %d (%d)\n", shiftX, shiftY, zoom, currIter, userIter);
 			printf("V: vx= %d vy= %d \t vz= %d \n", vX, vY, vZoom);
 		}
 
@@ -133,7 +142,7 @@ unsigned int colorFromPalette(double value, SDL_Surface *surface)
 
 unsigned int colorFromSpectrum(double value, SDL_Surface *surface)
 {
-	int pickedLambda = (700-450) * (value) + 450;
+	int pickedLambda = (650-400) * (value) + 400;
 	double r=0, g=0, b=0;
 	spectral_color(r, g, b, pickedLambda);
 	return SDL_MapRGB(surface->format, r*255, g*255, b*255);
@@ -183,7 +192,10 @@ void paintMandel(int maxX, int maxY, SDL_Surface *surface, double zoom, double s
 
 		int iter = mandelIterations(x, y, maxIter);
 
-		paint(pX, pY, colorFromSpectrum(((iter) / (double)(maxIter)), surface), surface);
+		if (iter >= maxIter) paint(pX, pY, color(0,0,0, surface), surface);
+		else paint(pX, pY, colorFromSpectrum(((iter) / (double)(maxIter)), surface), surface);
+
+		
 		//printf("P %d %d - Iter: %d \n", pX, pY, iter);
 		}
 }
@@ -192,7 +204,7 @@ void paintMandel(int maxX, int maxY, SDL_Surface *surface, double zoom, double s
 int mandelIterations(double x0, double y0, int maxIterations)
 {
 	double x = 0;
-	double y = 0.0;
+	double y = 0;
 	int iteration = 0;
 
 	while (x*x + y*y < 2 * 2 && iteration < maxIterations)
@@ -221,19 +233,21 @@ char Taste(int d) {
 
 }
 
-void handleKey(SDL_Event env, int &vx, int &vy, int &vzoom, bool &quit) {
+void handleKey(SDL_Event env, int &vx, int &vy, int &vzoom, int &vUserIter, bool &quit) {
 	
 	switch (env.type){
 		
 	case SDL_KEYDOWN:
 
 		switch (env.key.keysym.sym){
-		case SDLK_LEFT:		vx = -1;		break;
-		case SDLK_RIGHT:	vx = 1;			break;
-		case SDLK_UP:		vy = -1;		break;
-		case SDLK_DOWN:		vy = 1;			break;
-		case SDLK_PAGEUP:	vzoom = -1;		break;
-		case SDLK_PAGEDOWN: vzoom = 1;		break;
+		case SDLK_LEFT:			vx = -1;		break;
+		case SDLK_RIGHT:		vx = 1;			break;
+		case SDLK_UP:			vy = -1;		break;
+		case SDLK_DOWN:			vy = 1;			break;
+		case SDLK_PAGEUP:		vzoom = -1;		break;
+		case SDLK_PAGEDOWN:		vzoom = 1;		break;
+		case SDLK_RIGHTBRACKET:	vUserIter = -1;		break;
+		case SDLK_SLASH:		vUserIter = 1;		break;
 		default:break;
 		}		break;
 
@@ -245,6 +259,8 @@ void handleKey(SDL_Event env, int &vx, int &vy, int &vzoom, bool &quit) {
 		case SDLK_DOWN:		if (vy != 0)	vy = 0;		break;
 		case SDLK_PAGEUP:	if (vzoom != 0) vzoom = 0;	break;
 		case SDLK_PAGEDOWN: if (vzoom != 0) vzoom = 0;	break;
+		case SDLK_RIGHTBRACKET:	if (vUserIter != 0) vUserIter = 0;	break;
+		case SDLK_SLASH: if (vUserIter != 0) vUserIter = 0;	break;
 		default:break;
 		}	break;
 
