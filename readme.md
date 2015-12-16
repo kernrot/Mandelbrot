@@ -2,3 +2,5 @@
 #### small example of a interactive Mandelbrot in C++ with SDL (SDL-1.2.15) and OpenMP
 
 get the current release from https://github.com/kernrot/Mandelbrot/releases
+
+![Screencapture](http://i.imgur.com/Gx3zvAg.gif "Screencapture")
