@@ -3,4 +3,4 @@
 
 get the current release from https://github.com/kernrot/Mandelbrot/releases
 
-![Screencapture](http://i.imgur.com/Gx3zvAg.gif "Screencapture")
+![Screencapture](http://i.imgur.com/yzVQJFw.gif "Screencapture")
