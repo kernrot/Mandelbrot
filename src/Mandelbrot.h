@@ -1,7 +1,5 @@
-// stdafx.h : Includedatei für Standardsystem-Includedateien
-// oder häufig verwendete projektspezifische Includedateien,
-// die nur in unregelmäßigen Abständen geändert werden.
-//
+// Interactive Mandelbrot - 2014 - Conrad Henke
+// small example of a interactive Mandelbrot in C++ with SDL (SDL-1.2.15) and OpenMP
 
 #pragma once
 
@@ -14,9 +12,5 @@ void spectral_color(double &r, double &g, double &b, double l);
 void paintMandel(int maxX, int maxY, SDL_Surface *surface, double zoom, double shiftx, double shifty, int maxIter, int minIter);
 int mandelIterations(double x0, double y0, int maxIterations);
 char Taste(int d);
-void handleKey(SDL_Event env, int &vx, int &vy, int &vzoom, int &vUserIter, bool &quit);
+void handleKey(SDL_Event env, int &vx, int &vy, int &vzoom, int &vUserIter, bool &quit, bool &debug);
 int distance(int x1, int y1, int x2, int y2);
-
-
-// TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.
-
