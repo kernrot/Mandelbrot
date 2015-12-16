@@ -24,8 +24,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	int resX = 800;
 	int resY = 600;
 
-	resX = (_ttoi(argv[1]) > 50) ? _ttoi(argv[1]) : resX;
-	resY = (_ttoi(argv[2]) > 50) ? _ttoi(argv[2]) : resY;
+	if (argc == 3)
+	{
+		resX = (_ttoi(argv[1]) > 50) ? _ttoi(argv[1]) : resX;
+		resY = (_ttoi(argv[2]) > 50) ? _ttoi(argv[2]) : resY;
+	}
 
 	printf("Interactive Mandelbrot - 2014 - Conrad Henke (mandelbrot@conradhenke.de\n\n");
 	printf("interact by using following keys in the graphics window:\n arrow-keys to navigate\n page-up/down to zoom\n num+/num- to change iterations\n d to ouptu debug information\n ESC to exit");
